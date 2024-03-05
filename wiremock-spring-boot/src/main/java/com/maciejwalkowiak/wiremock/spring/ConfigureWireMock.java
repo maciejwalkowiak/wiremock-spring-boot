@@ -30,11 +30,11 @@ public @interface ConfigureWireMock {
     String name();
 
     /**
-     * The name of Spring property to inject the {@link WireMockServer#baseUrl()}
+     * Names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
      *
-     * @return the name of Spring property to inject the {@link WireMockServer#baseUrl()}
+     * @return names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
      */
-    String property() default "";
+    String[] property() default "";
 
     /**
      * The location of WireMock stub files. By default, stubs are resolved from classpath location <code>wiremock-server-name/mappings/</code>.

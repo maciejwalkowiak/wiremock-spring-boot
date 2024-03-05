@@ -8,13 +8,16 @@ import java.net.http.HttpResponse;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.core.env.Environment;
 import org.springframework.test.util.TestSocketUtils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -31,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         ),
         @ConfigureWireMock(
                 name = "todo-service",
-                property = "todo-service.url",
+                property = {"todo-service.url", "bar-service.url"},
                 configurationCustomizers = WireMockConfigurationCustomizerTest.SampleConfigurationCustomizer.class
         ),
 })
@@ -62,6 +65,15 @@ class WireMockConfigurationCustomizerTest {
 
     @InjectWireMock("todo-service")
     private WireMockServer todoService;
+
+    @Test
+    void appliesPropertyInjection(@Autowired Environment environment) {
+        // TODO: @Maciej is there a programmatic way for accessing the @ConfigureWireMock ?
+        Stream.of("todo-service.url", "bar-service.url").forEach(property ->
+            assertThat(environment.getProperty(property)).isEqualTo("http://localhost:" + TODO_SERVICE_PORT));
+        Stream.of("user-service.url").forEach(property ->
+            assertThat(environment.getProperty(property)).isEqualTo("http://localhost:" + USER_SERVICE_PORT));
+    }
 
     @Test
     void appliesConfigurationCustomizer() {
