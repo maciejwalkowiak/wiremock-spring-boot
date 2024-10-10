@@ -96,13 +96,9 @@ class CustomPropertiesTest {
 
 By default, each `WireMockServer` is configured to load WireMock root from:
 
-1. Classpath
-   1. `wiremock/{server-name}`
-   2. `stubs/{server-name}`
-   3. `mappings/{server-name}`
-   4. `wiremock`
-   5. `stubs`
-   6. `mappings`
+1. Classpath *if specified*
+   1. `{name-of-mock}/{server-name}`
+   2. `{name-of-mock}`
 2. Directory
    1. `{CWD}/wiremock/{server-name}`
    2. `{CWD}/stubs/{server-name}`
